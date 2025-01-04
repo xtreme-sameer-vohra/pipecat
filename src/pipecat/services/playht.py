@@ -37,8 +37,7 @@ from pipecat.transcriptions.language import Language
 
 try:
     from pyht.async_client import AsyncClient
-    from pyht.client import TTSOptions
-    from pyht.protos.api_pb2 import Format
+    from pyht.client import Format, TTSOptions
 except ModuleNotFoundError as e:
     logger.error(f"Exception: {e}")
     logger.error(
@@ -353,9 +352,7 @@ class PlayHTTTSService(TTSService):
 
 class PlayHTHttpTTSService(TTSService):
     class InputParams(BaseModel):
-        language: Optional[Language] = Language.EN
         speed: Optional[float] = 1.0
-        seed: Optional[int] = None
 
     def __init__(
         self,
@@ -363,7 +360,7 @@ class PlayHTHttpTTSService(TTSService):
         api_key: str,
         user_id: str,
         voice_url: str,
-        voice_engine: str = "Play3.0-mini",
+        voice_engine: str = "Play3.0-mini-http",  # Options: Play3.0-mini-ws, Play3.0-mini-http, Play3.0-mini-grpc
         sample_rate: int = 24000,
         params: InputParams = InputParams(),
         **kwargs,
@@ -379,30 +376,21 @@ class PlayHTHttpTTSService(TTSService):
         )
         self._settings = {
             "sample_rate": sample_rate,
-            "language": self.language_to_service_language(params.language)
-            if params.language
-            else "english",
             "format": Format.FORMAT_WAV,
             "voice_engine": voice_engine,
             "speed": params.speed,
-            "seed": params.seed,
         }
         self.set_model_name(voice_engine)
         self.set_voice(voice_url)
         self._options = TTSOptions(
             voice=self._voice_id,
-            language=self._settings["language"],
             sample_rate=self._settings["sample_rate"],
             format=self._settings["format"],
             speed=self._settings["speed"],
-            seed=self._settings["seed"],
         )
 
     def can_generate_metrics(self) -> bool:
         return True
-
-    def language_to_service_language(self, language: Language) -> str | None:
-        return language_to_playht_language(language)
 
     async def run_tts(self, text: str) -> AsyncGenerator[Frame, None]:
         logger.debug(f"Generating TTS: [{text}]")

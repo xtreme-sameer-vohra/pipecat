@@ -5,6 +5,22 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - TBD
+
+### Added
+
+- Added a new foundational example `07e-interruptible-playht-http.py` for easy
+  testing of `PlayHTHttpTTSService`.
+
+### Changed
+
+- Changed the default model for `PlayHTHttpTTSService` to `Play3.0-mini-http`.
+
+### Fixed
+
+- Fixed an import issue for `PlayHTHttpTTSService`. Also removed language and
+  seed which are not supported `TTSOptions` by the PlayHT python client.
+
 ## [0.0.52] - 2024-12-24
 
 ### Added
